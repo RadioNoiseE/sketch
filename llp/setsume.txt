@@ -1,3 +1,59 @@
 Implementation of the syntax-directed compiler frontend in C.
 
+Below is the BNF of the language:
+
+  ,------------------------------------------------
+  | 1|  program  -->  block
+  | 2|    block  -->  { decls stmts }
+  | 3|    decls  -->  decls decl
+  | 4|            |   є
+  | 5|     decl  -->  type id ;
+  | 6|     type  -->  type [ num ]
+  | 7|            |   basic
+  | 8|    stmts  -->  stmts stmt
+  | 9|            |   є
+  |10|
+  |11|     stmt  -->  loc = bool ;
+  |12|            |   if ( bool ) stmt
+  |13|            |   if ( bool ) stmt else stmt
+  |14|            |   while ( bool ) stmt
+  |15|            |   do stmt while ( bool ) ;
+  |16|            |   break;
+  |17|            |   block
+  |18|    block  -->  loc [ bool ]
+  |19|            |   id
+  |20|
+  |21|     bool  -->  bool || join
+  |22|            |   join
+  |23|     join  -->  join && equality
+  |24|            |   equality
+  |25| equality  -->  equality == rel
+  |26|            |   equality != rel
+  |27|            |   rel
+  |28|      rel  -->  expr < expr
+  |29|            |   expr <= expr
+  |30|            |   expr >= expr
+  |31|            |   expr > expr
+  |32|            |   expr
+  |33|     expr  -->  expr + term
+  |34|            |   expr - term
+  |35|            |   term
+  |36|     term  -->  term * unary
+  |37|            |   term / unary
+  |38|            |   unary
+  |39|    unary  -->  ! unary
+  |40|            |   - unary
+  |41|            |   factor
+  |42|   factor  -->  ( bool )
+  |43|            |   loc
+  |44|            |   num
+  |45|            |   real
+  |46|            |   true
+  |47|            |   false
+  |48|
+  |49| terminal  :::  id basic if else while do
+  |50|                break num real true false
+  `------------------------------------------------
+
+------
 Keywords: LL parser
