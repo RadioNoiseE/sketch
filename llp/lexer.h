@@ -5,7 +5,7 @@
 
 #define RELAX ' '
 
-extern int peek;
+extern int  peek;
 extern long line;
 
-token lexer_scan(FILE *stream);
+token lexer_scan (FILE *stream);

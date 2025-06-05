@@ -1,20 +1,20 @@
 #include "global.h"
 
-int main(int argc, char *argv[]) {
+int main (int argc, char *argv[]) {
   if (argc != 3) {
-    fprintf(stderr, "Usage: %s <input> <output>\n", argv[0]);
+    fprintf (stderr, "Usage: %s <input> <output>\n", argv[0]);
     return EINVAL;
   }
 
-  FILE *fin = fopen(argv[1], "r");
+  FILE *fin = fopen (argv[1], "r");
   if (!fin) {
-    perror("Input file error");
+    perror ("Input file error");
     return errno;
   }
 
-  FILE *fout = fopen(argv[2], "w");
+  FILE *fout = fopen (argv[2], "w");
   if (!fout) {
-    perror("Output file error");
+    perror ("Output file error");
     return errno;
   }
 

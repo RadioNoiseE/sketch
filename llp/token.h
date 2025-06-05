@@ -28,11 +28,11 @@ enum tag {
 typedef struct {
   int type;
   union {
-    long num;
+    long   num;
     double real;
   } value;
   struct {
-    long offset;
+    long   offset;
     size_t length;
   } lexeme;
 } token;
