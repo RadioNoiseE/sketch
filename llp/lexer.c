@@ -1,7 +1,5 @@
 #include "lexer.h"
 #include "token.h"
-#include <ctype.h>
-#include <stdio.h>
 
 static bool eat (FILE *stream, int token) {
   peek = fgetc (stream);
@@ -75,6 +73,13 @@ token lexer_scan (FILE *stream) {
       digit  *= 10;
     }
     return token_real (figure, start, ftell (stream) - start);
+  }
+
+  if (isalpha (peek)) {
+    do {
+      peek = fgetc (stream);
+    } while (isalnum (peek));
+    // TODO: symbol table related
   }
 
   return as_is; // FIX: set peek to relax
