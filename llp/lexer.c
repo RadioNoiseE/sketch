@@ -1,17 +1,17 @@
 #include "lexer.h"
 
-void read() { peek = getchar(); }
-
-bool eat(int token) {
-  read();
+static bool eat(FILE *stream, int token) {
+  peek = fgetc(stream);
   if (peek != token)
     return false;
   peek = RELAX;
   return true;
 }
 
-int scan() {
-  for (;; read()) {
+token lexer_scan(FILE *stream) {
+#define as_is token_id(peek, start, 1)
+
+  for (;; peek = fgetc(stream)) {
     if (peek == ' ' || peek == '\t')
       continue;
     else if (peek == '\n')
@@ -20,49 +20,51 @@ int scan() {
       break;
   }
 
+  long start = ftell(stream) - 1;
+
   switch (peek) {
   case '&':
-    if (eat('&'))
-      return AND;
+    if (eat(stream, '&'))
+      return token_id(AND, start, 2);
     else
-      return peek;
+      return as_is;
   case '|':
-    if (eat('|'))
-      return OR;
+    if (eat(stream, '|'))
+      return token_id(AND, start, 2);
     else
-      return peek;
+      return as_is;
   case '=':
-    if (eat('='))
-      return EQ;
+    if (eat(stream, '='))
+      return token_id(EQ, start, 2);
     else
-      return peek;
+      return as_is;
   case '!':
-    if (eat('='))
-      return NE;
+    if (eat(stream, '='))
+      return token_id(NE, start, 2);
     else
-      return peek;
+      return as_is;
   case '<':
-    if (eat('='))
-      return LE;
+    if (eat(stream, '='))
+      return token_id(LE, start, 2);
     else
-      return peek;
+      return as_is;
   case '>':
-    if (eat('='))
-      return GE;
+    if (eat(stream, '='))
+      return token_id(GE, start, 2);
     else
-      return peek;
+      return as_is;
   }
 
   if (isdigit(peek)) {
     long figure = 0;
     do {
       figure = 10 * figure + peek - '0';
-      read();
+      peek = fgetc(stream);
     } while (isdigit(peek));
     if (peek != '.')
-      return figure;
-    // TODO: struct token, rewrite
+      return token_num(figure, start, ftell(stream) - start);
+    // TODO: handle float
   }
 
-  return peek;
+  return as_is; // FIX: set peek to relax
 }

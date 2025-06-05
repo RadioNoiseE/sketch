@@ -1,30 +1,11 @@
 #pragma once
 
-#include "global.h"
+#include "common.h"
+#include "token.h"
 
-enum tag {
-  AND = 256, // after 255 ascii characters
-  BASIC,
-  BREAK,
-  DO,
-  ELSE,
-  EQ,
-  FALSE,
-  GE,
-  ID,
-  IF,
-  INDEX,
-  LE,
-  MINUS,
-  NE,
-  NUM,
-  OR,
-  REAL,
-  TEMP,
-  TRUE,
-  WHILE
-};
+#define RELAX ' '
 
-void read(void);
-bool eat(int token);
-int scan(void);
+extern int peek;
+extern long line;
+
+token lexer_scan(FILE *stream);
