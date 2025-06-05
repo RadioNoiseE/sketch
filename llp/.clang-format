@@ -26,3 +26,5 @@ AlignOperands: AlignAfterOperator
 AlignTrailingComments:
   Kind: Always
 SpaceBeforeParens: Always
+
+...
