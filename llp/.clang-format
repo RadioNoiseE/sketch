@@ -1,4 +1,3 @@
----
 AlignAfterOpenBracket: Align
 AlignArrayOfStructures: Left
 AlignConsecutiveAssignments:
@@ -26,5 +25,3 @@ AlignOperands: AlignAfterOperator
 AlignTrailingComments:
   Kind: Always
 SpaceBeforeParens: Always
-
-...
