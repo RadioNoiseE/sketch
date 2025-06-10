@@ -1,24 +1,32 @@
 #include "prime.h"
 
-void prime (unsigned int *array, unsigned int limit) {
-  if (limit == UINT_MAX)
-    limit -= 1;
+unsigned int prime (unsigned int limit) {
+  if (limit <= 17 || limit == UINT_MAX)
+    return 0;
 
-  bool  *composite = (bool *) calloc (limit + 1, sizeof (bool));
-  size_t offset    = 0;
+  size_t bound  = limit / log (limit) * 1.25506;
+  size_t offset = 0;
 
-  for (size_t i = 2; i <= limit; i++) {
+  bool         *composite = calloc (limit + 1, sizeof (bool));
+  unsigned int *prime     = malloc ((bound + 1) * sizeof (unsigned int));
+
+  for (size_t i = 2; i <= limit && offset < bound; i++) {
     if (!composite[i])
-      array[offset++] = i;
+      prime[offset++] = i;
     for (size_t j = 0; j < offset; j++) {
-      unsigned int prime = array[j];
-      if (i * prime > limit)
+      unsigned int current = prime[j];
+      if (i * current > limit)
         break;
-      composite[i * prime] = true;
-      if (i % prime == 0)
+      composite[i * current] = true;
+      if (i % current == 0)
         break;
     }
   }
 
+  unsigned int result = prime[offset - 1];
+
   free (composite);
+  free (prime);
+
+  return result;
 }

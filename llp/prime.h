@@ -2,4 +2,4 @@
 
 #include "common.h"
 
-void prime (unsigned int *array, unsigned int limit);
+unsigned int prime (unsigned int limit);
