@@ -54,14 +54,14 @@ hashtable *hashtable_new (void) {
 
 void hashtable_insert (hashtable *hashtable, const char *key,
                        const char *value) {
-  bucket *current = new (key, value);
-  size_t  offset  = map (current->key, hashtable->size);
-
   if ((float) hashtable->count / hashtable->size > 0.7)
     resize (hashtable, prime (hashtable->size * 2));
 
+  bucket *current = new (key, value);
+  size_t  offset  = map (current->key, hashtable->size);
+
   while (hashtable->buckets[offset] != NULL)
-    offset = offset + 1 % hashtable->size;
+    offset = (offset + 1) % hashtable->size;
 
   hashtable->buckets[offset] = current;
   hashtable->count++;
