@@ -67,9 +67,38 @@ void hashtable_insert (hashtable *hashtable, const char *key,
   hashtable->count++;
 }
 
-void hashtable_delete (hashtable *hashtable, const char *key) {}
+void hashtable_delete (hashtable *hashtable, const char *key) {
+  size_t  offset  = map (key, hashtable->size);
+  bucket *current = hashtable->buckets[offset];
 
-char *hashtable_search (hashtable *hashtable, const char *key) {}
+  while (current != NULL) {
+    if (strcmp (current->key, key) == 0) {
+      delete (current);
+      hashtable->buckets[offset] = NULL;
+      hashtable->count--;
+    } else {
+      offset  = (offset + 1) % hashtable->size;
+      current = hashtable->buckets[offset];
+    }
+  }
+}
+
+char *hashtable_search (hashtable *hashtable, const char *key) {
+  size_t  offset  = map (key, hashtable->size);
+  size_t  count   = 0;
+  bucket *current = hashtable->buckets[offset];
+
+  while (count++ < hashtable->count) {
+    if (strcmp (current->key, key) == 0)
+      return current->value;
+    else {
+      offset  = (offset + 1) % hashtable->size;
+      current = hashtable->buckets[offset];
+    }
+  }
+
+  return NULL;
+}
 
 void hashtable_destory (hashtable *hashtable) {
   for (size_t i = 0; i < hashtable->size; i++) {
