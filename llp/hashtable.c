@@ -1,6 +1,8 @@
 #include "hashtable.h"
 #include "prime.h"
 
+static bucket DELETED = {NULL, NULL};
+
 static unsigned int map (const char *string, size_t size) {
   unsigned int hash = 0;
   while (*string)
@@ -29,7 +31,7 @@ static void resize (hashtable *target, size_t size) {
 
   for (size_t i = 0; i < target->size; i++) {
     bucket *bucket = target->buckets[i];
-    if (bucket != NULL)
+    if (bucket != NULL && bucket != &DELETED)
       hashtable_insert (temp, bucket->key, bucket->value);
   }
 
@@ -41,7 +43,7 @@ static void resize (hashtable *target, size_t size) {
   target->buckets       = temp->buckets;
   temp->buckets         = temp_buckets;
 
-  hashtable_destory (temp);
+  hashtable_destroy (temp);
 }
 
 hashtable *hashtable_new (void) {
@@ -57,13 +59,20 @@ void hashtable_insert (hashtable *hashtable, const char *key,
   if ((float) hashtable->count / hashtable->size > 0.7)
     resize (hashtable, prime (hashtable->size * 2));
 
-  bucket *current = new (key, value);
-  size_t  offset  = map (current->key, hashtable->size);
+  size_t  offset  = map (key, hashtable->size);
+  bucket *current = hashtable->buckets[offset];
 
-  while (hashtable->buckets[offset] != NULL)
-    offset = (offset + 1) % hashtable->size;
+  while (current != NULL && current != &DELETED) {
+    if (strcmp (current->key, key) == 0) {
+      free (current->value);
+      current->value = strdup (value);
+      return;
+    }
+    offset  = (offset + 1) % hashtable->size;
+    current = hashtable->buckets[offset];
+  }
 
-  hashtable->buckets[offset] = current;
+  hashtable->buckets[offset] = new (key, value);
   hashtable->count++;
 }
 
@@ -72,38 +81,35 @@ void hashtable_delete (hashtable *hashtable, const char *key) {
   bucket *current = hashtable->buckets[offset];
 
   while (current != NULL) {
-    if (strcmp (current->key, key) == 0) {
+    if (current != &DELETED && strcmp (current->key, key) == 0) {
       delete (current);
-      hashtable->buckets[offset] = NULL;
+      hashtable->buckets[offset] = &DELETED;
       hashtable->count--;
-    } else {
-      offset  = (offset + 1) % hashtable->size;
-      current = hashtable->buckets[offset];
+      return;
     }
+    offset  = (offset + 1) % hashtable->size;
+    current = hashtable->buckets[offset];
   }
 }
 
 char *hashtable_search (hashtable *hashtable, const char *key) {
   size_t  offset  = map (key, hashtable->size);
-  size_t  count   = 0;
   bucket *current = hashtable->buckets[offset];
 
-  while (count++ < hashtable->count) {
-    if (strcmp (current->key, key) == 0)
+  while (current != NULL) {
+    if (current != &DELETED && strcmp (current->key, key) == 0)
       return current->value;
-    else {
-      offset  = (offset + 1) % hashtable->size;
-      current = hashtable->buckets[offset];
-    }
+    offset  = (offset + 1) % hashtable->size;
+    current = hashtable->buckets[offset];
   }
 
   return NULL;
 }
 
-void hashtable_destory (hashtable *hashtable) {
+void hashtable_destroy (hashtable *hashtable) {
   for (size_t i = 0; i < hashtable->size; i++) {
     bucket *current = hashtable->buckets[i];
-    if (current != NULL)
+    if (current != NULL && current != &DELETED)
       delete (current);
   }
 

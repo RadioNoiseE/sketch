@@ -18,4 +18,4 @@ void       hashtable_insert (hashtable *hashtable, const char *key,
                              const char *value);
 void       hashtable_delete (hashtable *hashtable, const char *key);
 char      *hashtable_search (hashtable *hashtable, const char *key);
-void       hashtable_destory (hashtable *hashtable);
+void       hashtable_destroy (hashtable *hashtable);
