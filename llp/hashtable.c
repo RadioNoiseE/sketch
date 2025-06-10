@@ -5,8 +5,10 @@ static bucket DELETED = {NULL, NULL};
 
 static unsigned int map (const char *string, size_t size) {
   unsigned int hash = 0;
+
   while (*string)
     hash = hash * 131 + *string++;
+
   return hash % size;
 }
 
