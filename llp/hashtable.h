@@ -4,7 +4,7 @@
 
 typedef struct {
   char *key;
-  char *value;
+  void *value;
 } bucket;
 
 typedef struct {
@@ -15,7 +15,7 @@ typedef struct {
 
 hashtable *hashtable_new (void);
 void       hashtable_insert (hashtable *hashtable, const char *key,
-                             const char *value);
+                             const void *value);
 void       hashtable_delete (hashtable *hashtable, const char *key);
 char      *hashtable_search (hashtable *hashtable, const char *key);
 void       hashtable_destroy (hashtable *hashtable);

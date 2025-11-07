@@ -12,16 +12,15 @@ static unsigned int map (const char *string, size_t size) {
   return hash % size;
 }
 
-static bucket *new (const char *key, const char *value) {
+static bucket *new (const char *key, const void *value) {
   bucket *this = malloc (sizeof (bucket));
   this->key    = strdup (key);
-  this->value  = strdup (value);
+  this->value  = &value;
   return this;
 }
 
 static void delete (bucket *bucket) {
   free (bucket->key);
-  free (bucket->value);
   free (bucket);
 }
 
@@ -57,7 +56,7 @@ hashtable *hashtable_new (void) {
 }
 
 void hashtable_insert (hashtable *hashtable, const char *key,
-                       const char *value) {
+                       const void *value) {
   if ((float) hashtable->count / hashtable->size > 0.7)
     resize (hashtable, prime (hashtable->size * 2));
 
@@ -66,8 +65,7 @@ void hashtable_insert (hashtable *hashtable, const char *key,
 
   while (current != NULL && current != &DELETED) {
     if (strcmp (current->key, key) == 0) {
-      free (current->value);
-      current->value = strdup (value);
+      current->value = &value;
       return;
     }
     offset  = (offset + 1) % hashtable->size;
